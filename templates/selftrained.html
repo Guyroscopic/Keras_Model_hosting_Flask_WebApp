@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Self Trained Predictor</title>
+        <style>
+            * {
+                font-size:25px;
+            }
+        </style>
+    </head>
+    
+    <body>    
+        <input id="image-selector" type="file">    
+        <button id="predict-button">Predict</button>
+        <p style="font-weight:bold">Predictions:</p>    
+        <p>Dog: <span id="dog-prediction"></span></p>
+        <p>Cat: <span id="cat-prediction"></span></p>
+        <img id="selected-image" src=""/>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        
+        <script>
+            let base64Image;
+            let temp;             
+                        
+            $("#image-selector").change(function() {
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let dataURL = reader.result;
+                    $('#selected-image').attr("src", dataURL);
+
+                    temp = dataURL.replace(/^.*\;base64,/, "");
+                    base64Image = temp.replace(";base64,",  "")                    
+                    
+                    //base64Image = dataURL.replace("data:image/png;base64,","");
+                    console.log(base64Image);
+                }
+                reader.readAsDataURL($("#image-selector")[0].files[0]);
+                $("#dog-prediction").text("");
+                $("#cat-prediction").text("");
+            });
+            
+            $("#predict-button").click(function(){
+                let message = {
+                    image: base64Image
+                }
+                console.log(message);
+                console.log("MESSAGE RECIEVED")
+                
+                $.post("http://127.0.0.1:5000/predict_selftrained", JSON.stringify(message), function(response){
+                    console.log(response);
+                    $("#dog-prediction").text(response.prediction.dog.toFixed(6));
+                    $("#cat-prediction").text(response.prediction.cat.toFixed(6));
+                    console.log(response);
+                });
+            });       
+        </script>
+        
+    </body>    
+</html>

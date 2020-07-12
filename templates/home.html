@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Cats and Dogs</title>
+        <style>
+            * {
+                font-size:25px;
+            }
+        </style>
+    </head>
+
+    <body>
+
+        <h><b>Welcome to our Cats and Dogs Predictor</b></h>
+        <br><br>
+        <p>Which Predictor would you like to try</p>
+
+        <p>1) Self-trained Predictor:</p>
+        <button id="selftrained-predict-button">Self-trained Predictor</button><br><br>
+
+        <p>2) Fine Tunned Winner of ImageNet (2014):</p>
+        <button id="finetunned-predict-button">Self tunned world class predictor</button><br><br>
+
+        <p>3) You should also try our sign language interpreter:</p> 
+        <button id="signlanguage-predict-button">Sign Language Interpeter</button>
+
+
+        <script type="text/javascript">
+
+        document.getElementById("selftrained-predict-button").onclick = function () {
+            location.href = "/selftrained";
+        };
+
+        document.getElementById("finetunned-predict-button").onclick = function () {
+            location.href = "/finetunned";
+        };
+
+        document.getElementById("signlanguage-predict-button").onclick = function () {
+            location.href = "/signlanguage";
+        };  
+
+        </script>
+
+    </body>
+</html>
