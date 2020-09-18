@@ -1,45 +1,33 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Cats and Dogs</title>
-        <style>
-            * {
-                font-size:25px;
-            }
-        </style>
-    </head>
+{% extends 'layout.html' %}
+    
+{% block content %}
 
-    <body>
+<style>
+    body{
+        background-image: none;
+    }
+</style>
+        <h1 class="text-center my-4">Tensorflow based Keras Models</h1>
 
-        <h><b>Welcome to our Cats and Dogs Predictor</b></h>
-        <br><br>
-        <p>Which Predictor would you like to try</p>
+        <div class="text-center">
+            <p>1) Self-trained Predictor:</p>
+            <a href="{{ url_for('selftrained') }}">Self-trained Predictor</a><br><br>
 
-        <p>1) Self-trained Predictor:</p>
-        <button id="selftrained-predict-button">Self-trained Predictor</button><br><br>
+            <p>2) Fine Tunned Winner of ImageNet (2014):</p>
+            <a href="{{ url_for('finetunned') }}">Self tunned world class predictor</a><br><br>
 
-        <p>2) Fine Tunned Winner of ImageNet (2014):</p>
-        <button id="finetunned-predict-button">Self tunned world class predictor</button><br><br>
+            <p>3) You should also try our sign language interpreter:</p> 
+            <a href="{{ url_for('signlanguage') }}">Sign Language Interpeter</a>
+        </div>
 
-        <p>3) You should also try our sign language interpreter:</p> 
-        <button id="signlanguage-predict-button">Sign Language Interpeter</button>
+        <h1 class="text-center my-4">Tensorflow.js Models</h1>
 
+        <div class="text-center">
+            <p>1) TF.js in Browser classifier</p>
+            <a href="{{ url_for('mnistclassifier') }}">MNIST Digit Classifier</a><br><br>
 
-        <script type="text/javascript">
+            <p>2) TF.js in Browser classifier</p>
+            <a href="{{ url_for('tfjsrps') }}">Browser Based, Realtime Rock Paper Scissors Classifier</a>
+        </div>
 
-        document.getElementById("selftrained-predict-button").onclick = function () {
-            location.href = "/selftrained";
-        };
-
-        document.getElementById("finetunned-predict-button").onclick = function () {
-            location.href = "/finetunned";
-        };
-
-        document.getElementById("signlanguage-predict-button").onclick = function () {
-            location.href = "/signlanguage";
-        };  
-
-        </script>
-
-    </body>
-</html>
+{% endblock %}

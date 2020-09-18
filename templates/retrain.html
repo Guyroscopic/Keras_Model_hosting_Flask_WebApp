@@ -1,0 +1,61 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<script src="static/js/webcam.js"></script>
+<script src="static/js/rps-dataset.js"></script> 
+
+<div class="row justify-content-center">
+  <h1 class="text-white my-4">Realtime Rock Paper Scissors Classifier</h1>
+    <p class="text-white text-center mx-5 px-5" style="font-size: 18px">
+      This is Browser Based Tensorflow.js Classifier, which means the model is trained and tested on the Client Side <strong>using the Browser's own resources</strong>, so don't worry if your  browser slows down a bit while training.<br><br>
+      <strong>Providing Examples: </strong>To provide a rock training example to the model, you should make a <i>rock</i> symbol with your hand and press the <strong>rock</strong> button, do the same with paper and scissor. You can see the total number of 'examples provided' below.<br><br>
+      <strong>Training: </strong>Once done with the examples, click the <strong>Train Network</strong> button and you will start seeing the training statistics on the left side of your browser (don't worry if you're not familiar with some of the terms, they're just for nerds)<br><br>
+      <strong>Predicting: </strong> Now click the <strong>Start Predicting</strong> button and see the predictions change as you make sybmols with your hand
+    </p>
+</div>
+
+<!-- Live Webcam feed -->
+<div>
+	<div class="row">
+
+		<div class="col-lg-8">
+
+			<div class="row my-4 py-5">
+				<div class="col-md-7 text-white py-4">
+					<div class="container border px-4 py-2 mx-4">
+						<legend id="prediction">Predction: </legend>
+					</div>
+					<div class="my-3 py-3 mx-4">
+						<div class="text-center">
+							<button type="button" id="train" onclick="doTraining()" class="btn btn-light px-3">Train Network</button>
+						</div>
+						<div class="text-center my-3">
+							<button type="button" id="startPredicting" onclick="startPredicting()" class="btn btn-light mx-4 px-3">Start Predicting</button>
+							<button type="button" id="stopPredicting" onclick="stopPredicting()" class="btn btn-light mx-4 px-3">Stop Predicting</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Rock, Paper, Scissor entry buttons and traning Examples Indicator -->
+				<div class="col-md-5 text-white text-center py-4">
+					<button type="button" id="0" onclick="handleButton(this)" class="btn btn-light">Rock</button>
+					<legend id="rocksamples" class="mb-3">Rock Examples:</legend>
+
+					<button type="button" id="1" onclick="handleButton(this)" class="btn btn-light">Paper</button>
+					<legend id="papersamples" class="mb-3">Paper Examples:</legend>
+
+					<button type="button" id="2" onclick="handleButton(this)" class="btn btn-light">Scissors</button>
+					<legend id="scissorssamples" class="">Scissor Examples:</legend>
+				</div>
+		    </div>
+		</div>
+
+		<div class="col-lg-4">
+			<video class="my-4 px-5" autoplay playsinline muted id="wc" width="400" height="400"></video>
+		</div>
+	</div>
+</div>
+
+<script src="static/js/index.js"></script>
+{% endblock %}
+

@@ -1,60 +1,145 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Self Trained Predictor</title>
-        <style>
-            * {
-                font-size:25px;
-            }
-        </style>
-    </head>
+{% extends 'layout.html' %}
     
-    <body>    
-        <input id="image-selector" type="file">    
-        <button id="predict-button">Predict</button>
-        <p style="font-weight:bold">Predictions:</p>    
-        <p>Dog: <span id="dog-prediction"></span></p>
-        <p>Cat: <span id="cat-prediction"></span></p>
-        <img id="selected-image" src=""/>
-        
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        
-        <script>
-            let base64Image;
-            let temp;             
-                        
-            $("#image-selector").change(function() {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let dataURL = reader.result;
-                    $('#selected-image').attr("src", dataURL);
+{% block content %}
 
-                    temp = dataURL.replace(/^.*\;base64,/, "");
-                    base64Image = temp.replace(";base64,",  "")                    
-                    
-                    //base64Image = dataURL.replace("data:image/png;base64,","");
-                    console.log(base64Image);
-                }
-                reader.readAsDataURL($("#image-selector")[0].files[0]);
-                $("#dog-prediction").text("");
-                $("#cat-prediction").text("");
-            });
+<div class="row justify-content-center">
+  <h1 class="text-white my-4">Cats vs Dogs Classifier v1</h1>
+    <p class="text-white text-center mx-5 px-5" style="font-size: 18px">
+      This is a Model that I trained myself on 50 images of cats and 50 images of dogs, taken form Google Images. It has an accuacy of 90% on the Training Set and 85% on the Test Set. Below is a deployment of the Model that predicts on the Server Side which means it has to make a complete round trip before getting back to you so don't worry if it takes a couple of seconds ;) 
+    </p>
+</div>
+
+<div class="row">
+  <div class="col-md-6">
+    <h1 class="ml-5 text-white"><p>Upload Your Photo</p></h1>
+  </div>
+  <div class="col-md-6">
+    <h1 class="text-white">Predict</h1>
+  </div>   
+</div>
+           
+<br>
+
+<div class="content-section">
+  <form method="POST" enctype="multipart/form-data">
+	  <fieldset class="form-group">
+           
+      {{ form.hidden_tag() }}          
+           
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+
+            {{ form.photo(class='ml-5 text-white') }} 
+
+            <div class="invalid-feedback">
+              {% for error in form.photo.errors %}
+                <span>{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+             
+        <div class="col-md-3">
+          <div class="form-group ">	      	
+            {{ form.predict(class='btn btn-outline-light') }}
+          </div>
+        </div>
+
+        <div class="col-md-3">    
+          <a href="{{ url_for('home') }}" class="text-white">Go back to home</a>
+        </div>
+
+      </div>
+
+    </fieldset>
+  </form>
+</div>
+           
+<br>           
+           
+{% if response %}
+  <br>
+      <div class="row">            
+        <div class="col-md-4"></div>
+
+        <div class="col-md-4">
+          <div class="container-sm border text-center py-3">
+            <legend class="text-white">Prediction:</legend>    
+            <p class="text-white">Dog: 
+                <span id="dog-prediction">{{ response['dog'] }}</span>
+            </p>
+            <p class="text-white">Cat:
+              <span id="cat-prediction">{{ response['cat'] }}</span>
+            </p>
+          </div>
+        </div>    
+      </div>
+{% endif %}
+           
+<!-- Displaying the selected image -->  
+  <h2 class="ml-5 text-white">Your Image:</h2>
+  <div class="text-center">
+    <img id="selected-image" class="p-2 m-auto" src=""/>
+  </div>    
+         
+<script>                 
+  var oldpic;
+        
+  $("document").ready(function(e) {
+    $('#selected-image').attr("src", localStorage['myKey']);
+  });
+       
+  $({{ form.photo.id }}).change(function() {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      console.log("inside onload function")
+      let dataURL = reader.result;
+      localStorage['myKey'] = dataURL;
+      $('#selected-image').attr("src", dataURL);                  
+    }
             
-            $("#predict-button").click(function(){
+    reader.readAsDataURL($({{ form.photo.id }})[0].files[0]);
+    $("#dog-prediction").text("");
+    $("#cat-prediction").text("");
+  });
+        
+        //$(window).on("unload", function(e) { 
+        //    alet("abc");
+        //    localStorage.removeItem(mykey);
+        //});
+
+        //$(window).on("unload", function {
+         //   localStorage.removeItem(mykey);
+        //});
+            
+  $(window).on('popstate', function(event) {
+    alert("pop");
+    localStorage.removeItem(mykey);
+  });
+
+  window.onpopstate = function() {
+    alert("pop");
+    localStorage.removeItem(mykey);
+  }
+
+  if (performance.navigation.type == 2) {
+    alert("Back button clicked");
+    localStorage.removeItem(mykey);
+  }
+            /*$("#predict-button").click(function(){
                 let message = {
                     image: base64Image
                 }
                 console.log(message);
                 console.log("MESSAGE RECIEVED")
                 
-                $.post("http://127.0.0.1:5000/predict_selftrained", JSON.stringify(message), function(response){
+                $.post("{{url_for('predict_selftrained')}}", JSON.stringify(message), function(response){
                     console.log(response);
                     $("#dog-prediction").text(response.prediction.dog.toFixed(6));
                     $("#cat-prediction").text(response.prediction.cat.toFixed(6));
                     console.log(response);
                 });
-            });       
-        </script>
-        
-    </body>    
-</html>
+            }); */      
+</script>
+{% endblock %}

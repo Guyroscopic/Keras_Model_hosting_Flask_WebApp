@@ -1,60 +1,99 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Fine Tunned Predictor</title>
-        <style>
-            * {
-                font-size:25px;
-            }
-        </style>
-    </head>
+{% extends 'layout.html' %}
     
-    <body>    
-        <input id="image-selector" type="file">    
-        <button id="predict-button">Predict</button>
-        <p style="font-weight:bold">Predictions:</p>    
-        <p>Dog: <span id="dog-prediction"></span></p>
-        <p>Cat: <span id="cat-prediction"></span></p>
-        <img id="selected-image" src=""/>
-        
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        
-        <script>
-            let base64Image;
-            let temp;             
-                        
-            $("#image-selector").change(function() {
-                let reader = new FileReader();
-                reader.onload = function(e) {
-                    let dataURL = reader.result;
-                    $('#selected-image').attr("src", dataURL);
+{% block content %}
 
-                    temp = dataURL.replace(/^.*\;base64,/, "");
-                    base64Image = temp.replace(";base64,",  "")                    
-                    
-                    //base64Image = dataURL.replace("data:image/png;base64,","");
-                    console.log(base64Image);
-                }
-                reader.readAsDataURL($("#image-selector")[0].files[0]);
-                $("#dog-prediction").text("");
-                $("#cat-prediction").text("");
-            });
-            
-            $("#predict-button").click(function(){
-                let message = {
-                    image: base64Image
-                }
-                console.log(message);
-                console.log("MESSAGE RECIEVED")
-                
-                $.post("http://127.0.0.1:5000/predict_finetunned", JSON.stringify(message), function(response){
-                    console.log(response);
-                    $("#dog-prediction").text(response.prediction.dog.toFixed(6));
-                    $("#cat-prediction").text(response.prediction.cat.toFixed(6));
-                    console.log(response);
-                });
-            });       
-        </script>
+<div class="row justify-content-center">
+  <h1 class="text-white my-4">Cats vs Dogs Classifier v2</h1>
+    <p class="text-white text-center mx-5 px-5" style="font-size: 18px">
+      This is the VGG16 Model that won the 2014 ImageNet competetion, trained over 14 million images belonging to 1000 different classes. It acheived an accuacy of 92.7% on the Test Set. Below is a <strong>finetunned</strong> deployment of the Model predicts only on 2 classes i.e Cats and Dogs. This is also Server Based Model which means it has to make a complete round trip before getting back to you so don't worry if it takes a couple of seconds ;) 
+    </p>
+</div>
+
+<div class="row">
+
+  <div class="col-md-6">
+    <h1 class="ml-5 text-white"><p>Upload Your Photo</p></h1>
+  </div>
+
+  <div class="col-md-3">
+    <h1 class="text-white">Predict</h1>
+  </div>   
+
+</div>
+
+<div class="row">
+
+  <div class="col-md-6">
+    <div class="form-group">
+      <input id="image-selector" class="text-white ml-5"type="file">           
+    </div>
+  </div>
+             
+  <div class="col-md-3">
+    <div class="form-group ">         
+      <button id="predict-button" class="btn btn-outline-light">Predict</button>
+    </div>
+  </div>
+
+  <div class="col-md-3">    
+    <a href="{{ url_for('home') }}" class="text-white">Go back to home</a>
+  </div>
+
+</div>
+
+<br>  
+          
+<div class="row"> 
+
+  <div class="col-md-4"></div>
+
+  <div class="col-md-4">
+    <div class="container-sm border text-center py-3">          
+      <legend class="text-white">Predictions:</legend>    
+        <p class="text-white">Dog: 
+          <span id="dog-prediction"></span>
+        </p>
+        <p class="text-white">Cat: 
+          <span id="cat-prediction"></span>
+        </p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Displaying the selected image -->  
+<h2 class="ml-5 text-white">Your Image:</h2>
+<div class="text-center">
+  <img id="selected-image" class="p-2 m-auto" src=""/>
+</div>  
         
-    </body>    
-</html>
+<script>
+  let base64Image;
+  let temp;             
+                        
+  $("#image-selector").change(function() {
+    let reader = new FileReader();
+    reader.onload = function(e) {
+      let dataURL = reader.result;
+      $('#selected-image').attr("src", dataURL);
+
+      temp = dataURL.replace(/^.*\;base64,/, "");
+      base64Image = temp.replace(";base64,",  "")                    
+      }
+
+      reader.readAsDataURL($("#image-selector")[0].files[0]);
+      $("#dog-prediction").text("");
+      $("#cat-prediction").text("");
+  });
+            
+  $("#predict-button").click(function(){
+    let message = { image: base64Image }
+                
+    $.post("{{url_for('predict_finetunned')}}", JSON.stringify(message), function(response){
+      $("#dog-prediction").text(response.prediction.dog);
+      $("#cat-prediction").text(response.prediction.cat);
+    });
+  });       
+</script>
+
+{% endblock %}
